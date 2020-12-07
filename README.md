@@ -6,3 +6,9 @@ Before exporting the physical scene, you should
 
 Update Dec-2020
 - Added option to Export only selected objects
+
+Install
+- In the Blender program folder, navigate to [[2.8x\scripts\addons\]]
+- Create a folder in 'addons' and name it something like "io_bullet_blender_exporter" (no spaces, hyphens)
+- Copy all the files in this project to the folder
+- Start Blender, open Preferences > Add-ons enable "Bullet json format" 
