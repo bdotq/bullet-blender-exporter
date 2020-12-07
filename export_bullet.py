@@ -18,7 +18,7 @@ def getOffsetFromAToB(a, b):
 	tOffset.z = tOffset.z / sa.z
 	return tOffset, rOffset
 
-def save(context, path, out_hulls, out_meshes):
+def save(context, path, out_hulls, out_meshes, out_selected):
 	jsonObject = {}
 
 	scene = context.scene
@@ -28,8 +28,13 @@ def save(context, path, out_hulls, out_meshes):
 	jsonObject["convex_hulls"] = []
 	jsonObject["meshes"] = []
 
-	for obj in scene.objects:
-		
+	if out_selected == True:
+		obj_loop = context.selected_objects
+	else:
+		obj_loop = scene.objects
+
+	for obj in obj_loop:
+
 
 		if obj.rigid_body is not None:
 			transform = obj.matrix_world
@@ -62,7 +67,7 @@ def save(context, path, out_hulls, out_meshes):
 			if out_hulls == True and obj.rigid_body.collision_shape == 'CONVEX_HULL':
 				save_hull = True
 				for i in jsonObject["convex_hulls"]:
-					if (i["hull_name"] == obj.data.name) : 
+					if (i["hull_name"] == obj.data.name) :
 						save_hull = False
 				if (save_hull == True) :
 					hullObject = {}
@@ -76,7 +81,7 @@ def save(context, path, out_hulls, out_meshes):
 			if out_meshes == True and obj.rigid_body.collision_shape == 'MESH':
 				save_mesh = True
 				for i in jsonObject["meshes"]:
-					if (i["mesh_name"] == obj.data.name) : 
+					if (i["mesh_name"] == obj.data.name) :
 						save_mesh = False
 				if (save_mesh == True) :
 					meshObject = {}
@@ -124,7 +129,7 @@ def save(context, path, out_hulls, out_meshes):
 				tOffset, rOffset = getOffsetFromAToB(object2, obj)
 				rigidBodyConstraintObject["translation_offset_b"] = tOffset[0:3]
 				rigidBodyConstraintObject["rotation_offset_b"] = rOffset[0:4]
-			
+
 			if constraintType == 'HINGE':
 				rigidBodyConstraintObject["use_limit_ang_z"] = obj.rigid_body_constraint.use_limit_ang_z
 				rigidBodyConstraintObject["limit_ang_z_lower"] = obj.rigid_body_constraint.limit_ang_z_lower
@@ -178,11 +183,10 @@ def save(context, path, out_hulls, out_meshes):
 					rigidBodyConstraintObject["use_spring_ang_z"] = obj.rigid_body_constraint.use_spring_ang_z
 					rigidBodyConstraintObject["spring_stiffness_ang_z"] = obj.rigid_body_constraint.spring_stiffness_ang_z
 					rigidBodyConstraintObject["spring_damping_ang_z"] = obj.rigid_body_constraint.spring_damping_ang_z
-					
+
 			jsonObject["constraints"].append(rigidBodyConstraintObject)
 
 	jsonText = json.dumps(jsonObject)
 	f = open(path, 'w')
 	f.write(jsonText)
 	f.close()
-	
