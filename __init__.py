@@ -49,6 +49,7 @@ class ExportBullet(bpy.types.Operator, ExportHelper):
 
 	out_hulls = bpy.props.BoolProperty(name="Include Convex Hulls data", description="Export Convex Hulls shape points", default = True)
 	out_meshes = bpy.props.BoolProperty( name="Include Mesh Shapes data", description="Export Mesh Shape as Triaangle mesh (indices and vertices)", default = True)
+	out_selected = bpy.props.BoolProperty( name="Export Selected Only", description="Only export selected objects", default = True)
 
 	filename_ext = ".json"
 	filter_glob = StringProperty(
@@ -60,7 +61,7 @@ class ExportBullet(bpy.types.Operator, ExportHelper):
 
 	def execute(self, context):
 		from . import export_bullet
-		export_bullet.save(context, self.properties.filepath, self.out_hulls, self.out_meshes)
+		export_bullet.save(context, self.properties.filepath, self.out_hulls, self.out_meshes, self.out_selected)
 		return {'FINISHED'}
 
 	def draw(self, context):
@@ -69,7 +70,7 @@ class ExportBullet(bpy.types.Operator, ExportHelper):
 		col.label(text="Options")
 		col.prop(self, "out_hulls")
 		col.prop(self, "out_meshes")
-        
+		col.prop(self, "out_selected")        
 
 
 def menu_func_import(self, context):
